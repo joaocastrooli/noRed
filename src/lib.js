@@ -4,7 +4,18 @@ export const EMPTY = { tx: [], debts: [], plan: { renda: 0, ess: 0 } }
 export const R = (n) =>
   (n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 export const num = (v) => parseFloat(String(v).replace(',', '.')) || 0
-export const today = () => new Date().toISOString().slice(0, 10)
+const p2 = (n) => String(n).padStart(2, '0')
+export const today = () => { const d = new Date(); return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}` }
+export const byMonth = (tx, ym) => tx.filter((t) => t.d.slice(0, 7) === ym)
+export const MESES = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+export const fmtMes = (ym) => { const [y, m] = ym.split('-'); return `${MESES[+m - 1]} de ${y}` }
+export const shiftMes = (ym, n) => { const [y, m] = ym.split('-').map(Number); const d = new Date(y, m - 1 + n, 1); return `${d.getFullYear()}-${p2(d.getMonth() + 1)}` }
+// Aceita só dígitos e uma vírgula, com no máximo 2 casas decimais.
+export const onlyNum = (s) => {
+  const v = s.replace(/\./g, ',').replace(/[^0-9,]/g, '')
+  const i = v.indexOf(',')
+  return i < 0 ? v : v.slice(0, i + 1) + v.slice(i + 1).replace(/,/g, '').slice(0, 2)
+}
 export const thisMonth = (tx) => tx.filter((t) => t.d.slice(0, 7) === today().slice(0, 7))
 
 // Simula o método "avalanche": sobra vai para a dívida de maior juros.
